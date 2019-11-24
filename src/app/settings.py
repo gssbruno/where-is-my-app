@@ -19,6 +19,7 @@ if DEBUG:
 # Application definition
 
 INSTALLED_APPS = [
+    'rest_framework',
     'WhereIs.apps.WhereisConfig',
     'django.contrib.admin',
     'django.contrib.auth',

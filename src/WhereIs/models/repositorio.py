@@ -1,5 +1,4 @@
 from django.db import models
-from .servidor import ServidorModel
 
 
 class RepositorioModel(models.Model):
@@ -8,7 +7,7 @@ class RepositorioModel(models.Model):
     descricao = models.TextField(blank=True)
     link = models.URLField(blank=False)
     servidor = models.ForeignKey(
-        ServidorModel,
+        'ServidorModel',
         on_delete=models.CASCADE,
         null=True,
     )
