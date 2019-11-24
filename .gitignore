@@ -1,0 +1,10 @@
+venv
+*.pyc
+.env
+src/static
+postgres
+src/logs/*
+!*.gitkeep
+
+.idea
+.vscode

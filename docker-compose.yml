@@ -1,0 +1,54 @@
+version: "2.4"
+services:
+
+  django:
+    build: .
+    expose:
+      - 8080
+    volumes:
+      - ./src:/app
+    working_dir: /app
+    environment:
+      - DJANGO_DEBUG=${DJANGO_DEBUG}
+      - DJANGO_HOST=${DJANGO_HOST}
+      - DJANGO_RELOAD=${DJANGO_RELOAD}
+      - QTD_WORKERS=${QTD_WORKERS}
+      - DB_HOST=${DB_HOST}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
+      - DB_PORT=${DB_PORT}
+    entrypoint:
+      - /app/entrypoint.sh
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  nginx:
+    image: nginx:1.17.3
+    ports:
+      - ${DJANGO_PORT}:80
+    volumes:
+      - ./src/static:/static
+      - ./nginx:/etc/nginx/conf.d
+    depends_on:
+      - django
+    restart: on-failure
+
+  postgres:
+    image: postgres:9.6.15
+    ports:
+      - ${DB_PORT}:5432
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=${DB_PASS}
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - TZ=America/Sao_Paulo
+    healthcheck:
+      test: /usr/bin/pg_isready -U ${DB_USER}
+      interval: 5s
+      timeout: 10s
+      retries: 60
+    restart: on-failure
